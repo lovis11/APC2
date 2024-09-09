@@ -25,6 +25,13 @@ void draw_xy(int x, int y, unsigned char r, unsigned char g, unsigned char b) {
 
 #define RGBA(r, g, b, a) (r << 24 | g << 16 | b << 8 | a)
 
+union RGBAPixel {
+  int pixel; // 4 bytes
+  struct rgba {
+    unsigned char a, b, g, r;
+  }; // 4 bytes
+};
+
 int main() {
   // imagem 10x10
   int imagem[10][10] = {
@@ -39,11 +46,6 @@ int main() {
     {RGBA(255, 204, 0, 255), RGBA(230, 230, 25, 255), RGBA(204, 255, 51, 255), RGBA(179, 255, 76, 255), RGBA(153, 255, 102, 255), RGBA(128, 255, 128, 255), RGBA(102, 255, 153, 255), RGBA(76, 255, 179, 255), RGBA(51, 255, 204, 255), RGBA(25, 255, 230, 255)},
     {RGBA(255, 230, 0, 255), RGBA(230, 255, 25, 255), RGBA(204, 255, 51, 255), RGBA(179, 255, 76, 255), RGBA(153, 255, 102, 255), RGBA(128, 255, 128, 255), RGBA(102, 255, 153, 255), RGBA(76, 255, 179, 255), RGBA(51, 255, 204, 255), RGBA(25, 255, 230, 255)}
   }; 
-
-  union RGBA_Pixel {
-    int pixel; // 4 bytes
-    unsigned char rgba[4]; // 4 bytes
-  };
 
   // copia imagem original para imagem 2
   int imagem2[10][10];
@@ -67,45 +69,43 @@ int main() {
   }
 
   // Exercício 1
-  unsigned char *pchar2 = (unsigned char *)imagem2;
+  union RGBA_Pixel *pixels = (union RGBA_Pixel *)imagem2;
   // insira o seu código abaixo
   // soluçao
-  for(int i = 0; i < 10 * 10 * 4; i+=4) {
-    *(pchar2+3) = 0;
-    pchar2 = pchar2 + 4;
+  for(int i = 0; i < 10 * 10; i++) {
+    pixels[i].rgba[3] = 0;
   }
-    
+
   // insira o seu código acima
 
   // Exercício 2
-  unsigned char *pchar3 = (unsigned char *)imagem3;
+  pixels = (union RGBA_Pixel *)imagem3; 
   // insira o seu código abaixo
   // soluçao:
-  for(int b = 0; b < 100*4; b+=4) {
-    int media = round((pchar3[b+3]+pchar3[b+2]+pchar3[b+1]+pchar3[b])/4.0);
-    pchar3[b] = media;
-    pchar3[b+1] = media;
-    pchar3[b+2] = media;
-    pchar3[b+3] = media;
+  for(int i = 0; i < 10 * 10; i++) {
+    int media = round((pixels[i].rgba[1] + pixels[i].rgba[2] + pixels[i].rgba[3])/3.0);
+    pixels[i].rgba[1] = media;
+    pixels[i].rgba[2] = media;
+    pixels[i].rgba[3] = media;
   }
 
   // Exercício 3
-  pchar2 = (unsigned char *)imagem2;
-  pchar3 = (unsigned char *)imagem3;
-  unsigned char *pchar4 = (unsigned char *)imagem4;
+  union RGBA_Pixel *pixels2 = imagem4;
   // insira o seu código abaixo
   // soluçao:
-  for(int lin = 0; lin < 10; lin++) {
-    for(int col = 0; col < 10; col++) {
-      if(lin == col) {
-        pchar4[(lin*10*4) + (col*4) + 3] = 0;
-        pchar4[(lin*10*4) + (col*4) + 2] = 0;
-        pchar4[(lin*10*4) + (col*4) + 1] = 255;
-      } else if(lin + col == 9) {
-        pchar4[(lin*10*4) + (col*4) + 3] = 0;
-        pchar4[(lin*10*4) + (col*4) + 2] = 0;
-        pchar4[(lin*10*4) + (col*4) + 1] = 255;
-      }
+  for (int lin = 0; lin < 10; lin++) {
+    for (int col = 0; col < 10; col++) {
+      if (lin == col) {
+        // Draw the vertical line (blue)
+        pixels2[(lin * 10) + col].rgba[1] = 255; 
+        pixels2[(lin * 10) + col].rgba[2] = 0;
+        pixels2[(lin * 10) + col].rgba[3] = 0;
+      } else if (lin + col == 9) {
+        // Draw the horizontal line (blue)
+        pixels2[(lin * 10) + col].rgba[1] = 255;
+        pixels2[(lin * 10) + col].rgba[2] = 0;
+        pixels2[(lin * 10) + col].rgba[3] = 0;
+      } 
     }
   }
 
