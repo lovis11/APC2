@@ -79,14 +79,12 @@ int main() {
   // insira o seu código acima
 
   // Exercício 2
-  pixels = (union RGBA_Pixel *)imagem3; 
-  // insira o seu código abaixo
-  // soluçao:
-  for(int i = 0; i < 10 * 10; i++) {
-    int media = round((pixels[i].rgba[1] + pixels[i].rgba[2] + pixels[i].rgba[3])/3.0);
-    pixels[i].rgba[1] = media;
-    pixels[i].rgba[2] = media;
-    pixels[i].rgba[3] = media;
+  union RGBA_Pixel *pixels1 = imagem3;
+  for (int x = 0; x < 100 ; x++) {
+    int media = round (pixels1[x].rgba[0]+pixels1[x].rgba[1]+pixels1[x].rgba[2]) / 3.0;
+    pixels1[x].rgba[1] = media;
+    pixels1[x].rgba[2]= media;
+    pixels1[x].rgba[3]= media;
   }
 
   // Exercício 3
